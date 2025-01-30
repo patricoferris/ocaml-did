@@ -10,9 +10,13 @@ let roundtrip s =
 
 let did_roundtrip s =
   let did = Did.of_string_exn s in
-  Alcotest.(check string) "same did" s (Did.to_uri did |> Uri.to_string)
+  Alcotest.(check string) "same did" s (Did.to_uri did |> Uri.to_string);
+  did
 
-let test_fragment () = did_roundtrip "did:example:123456789abcdefghi#key-1"
+let test_fragment () =
+  let did = did_roundtrip "did:example:123456789abcdefghi#key-1" in
+  Alcotest.(check (option string))
+    "same fragment" (Some "key-1") (Did.fragment did)
 
 let () =
   Alcotest.run "ocaml-did"
