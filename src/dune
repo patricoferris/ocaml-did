@@ -1,0 +1,4 @@
+(library
+ (name did)
+ (public_name did)
+ (libraries uri yojson multibase jose))
