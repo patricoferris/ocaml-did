@@ -21,6 +21,7 @@
  (description "A library for working with Decentralised Identifiers (DIDs) in OCaml")
  (depends
    ocaml
+   fmt
    multibase
    yojson
    uri

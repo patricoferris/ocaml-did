@@ -95,7 +95,7 @@ module Document = struct
   }
 
   and verification_material =
-    | Public_key_jwk of Jose.Jwk.public Jose.Jwk.t
+    | Public_key_jwk of (string * Yojson.Basic.t) list 
     | Public_key_multibase of string
     | Other of (string * Yojson.Basic.t) list
 
@@ -132,10 +132,7 @@ module Document = struct
 
   let vm_material_of_json v =
     match Yojson.Basic.Util.member "publicKeyJwk" v with
-    | `Assoc _ as map ->
-        let conv = Yojson.Basic.to_string map |> Yojson.Safe.from_string in
-        let jwk = Jose.Jwk.of_pub_json conv |> Result.get_ok in
-        Public_key_jwk jwk
+    | `Assoc map -> Public_key_jwk map
     | `Null -> (
         match Yojson.Basic.Util.member "publicKeyMultibase" v with
         | `String s -> Public_key_multibase s
@@ -149,7 +146,7 @@ module Document = struct
 
   let vm_material_to_json = function
     | Public_key_jwk jwk ->
-        [ ("publicKeyJwk", Jose.Jwk.to_pub_json jwk |> Yojson.Safe.to_basic) ]
+        [ ("publicKeyJwk", `Assoc jwk) ]
     | Public_key_multibase m -> [ ("publicKeyMultibase", `String m) ]
     | Other assoc -> assoc
 
